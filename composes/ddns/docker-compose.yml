@@ -1,0 +1,10 @@
+version: '3.6'
+services:
+  ddns:
+    image: 'jeessy/ddns-go:latest'
+    container_name: ddns-go
+    restart: always
+    network_mode: host
+    entrypoint: /app/ddns-go -l :9876
+    volumes:
+      - './conf/ddns_go_config.yaml:/root/.ddns_go_config.yaml'

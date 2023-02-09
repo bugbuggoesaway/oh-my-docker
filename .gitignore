@@ -1,0 +1,5 @@
+/.idea/
+/**/data/
+/**/logs/
+oh-my-docker.iml
+/composes/gitlab/conf/

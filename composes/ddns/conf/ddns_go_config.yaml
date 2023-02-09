@@ -1,0 +1,27 @@
+ipv4:
+  enable: true
+  gettype: url
+  url: https://myip4.ipip.net, https://ddns.oray.com/checkip, https://ip.3322.net
+  netinterface: ""
+  domains:
+  - dev.cafebabe.fun
+ipv6:
+  enable: false
+  gettype: url
+  url: https://myip6.ipip.net, https://speed.neu6.edu.cn/getIP.php, https://v6.ident.me
+  netinterface: ""
+  ipv6reg: ""
+  domains:
+  - ""
+dns:
+  name: dnspod
+  id: "356931"
+  secret: 5c4ee6c0081a2f90b6fe6569fd1123f3
+user:
+  username: ""
+  password: ""
+webhook:
+  webhookurl: ""
+  webhookrequestbody: ""
+notallowwanaccess: true
+ttl: ""

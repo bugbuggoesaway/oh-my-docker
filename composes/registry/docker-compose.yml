@@ -1,0 +1,10 @@
+services:
+  registry:
+    restart: always
+    image: registry:2
+    container_name: mirror_registry
+    ports:
+      - 15000:5000
+    volumes:
+      - ./conf:/etc/docker/registry
+      - ~/.docker/volumes/registry/data:/var/lib/registry

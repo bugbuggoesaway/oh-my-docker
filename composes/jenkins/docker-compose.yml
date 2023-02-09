@@ -1,0 +1,50 @@
+version: '3.6'
+
+services:
+  setup:
+    image: jenkins/jenkins:2.386
+    container_name: jenkins-setup
+    user: root
+    volumes:
+      - local-bin:/usr/local/bin/
+      - ssh-keys:/root/.ssh/
+    command: >
+      bash -c '
+        [ ! -f "/root/.ssh/id_rsa" ] && echo "Generating SSH keys..." && ssh-keygen -q -m PEM -t rsa -b 2048 -P "" -f /root/.ssh/id_rsa;
+        [ ! -f "/usr/local/bin/docker" ] && echo "Downloading docker client..." && curl -O https://mirrors.aliyun.com/docker-ce/linux/static/stable/x86_64/docker-20.10.22.tgz && tar -xvf docker-20.10.22.tgz && mv docker/docker /usr/local/bin/ && chmod +x /usr/local/bin/docker;
+        sleep infinity;
+      '
+    healthcheck:
+      test: [ "CMD-SHELL", "[ -f /usr/local/bin/docker ]" ]
+      interval: 1s
+      timeout: 5s
+      retries: 600
+
+  jenkins:
+    depends_on:
+      setup:
+        condition: service_healthy
+    image: jenkins/jenkins:2.386
+    container_name: jenkins
+    restart: always
+    user: root
+    ports:
+      - "18080:8080"
+    environment:
+      - JAVA_OPTS=-Dhudson.model.DownloadService.noSignatureCheck=true
+      - JENKINS_UC=https://mirrors.aliyun.com/jenkins/
+      - JENKINS_UC_DOWNLOAD=https://mirrors.aliyun.com/jenkins/
+    volumes:
+      - /home/work/.docker/volumes/jenkins/data:/var/jenkins_home
+      - /home/work/.sdks/jdk-17.0.3.1:/usr/local/jdk-17.0.3.1
+      - /home/work/.sdks/apache-maven-3.8.6:/usr/local/maven-3.8.1
+      - /home/work/.m2:/root/.m2
+      - ssh-keys:/root/.ssh/
+      - local-bin:/usr/local/bin
+      - /var/run/docker.sock:/var/run/docker.sock
+
+volumes:
+  local-bin:
+    driver: local
+  ssh-keys:
+    driver: local

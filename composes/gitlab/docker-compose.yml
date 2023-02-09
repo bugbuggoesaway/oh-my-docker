@@ -1,0 +1,48 @@
+version: '3.6'
+services:
+  gitlab:
+    image: 'gitlab/gitlab-ee:15.8.0-ee.0'
+    container_name: gitlab
+    restart: always
+    hostname: 'gitlab.cafebabe.fun'
+    environment:
+      GITLAB_OMNIBUS_CONFIG: |
+        external_url 'https://gitlab.cafebabe.fun'
+        gitlab_rails['gitlab_shell_ssh_port'] = 2222
+        nginx['enable'] = false
+        gitlab_workhorse['enable'] = true
+        gitlab_workhorse['listen_network'] = 'tcp'
+        gitlab_workhorse['listen_addr'] = '0.0.0.0:8181'
+        gitlab_rails['smtp_enable'] = true
+        gitlab_rails['smtp_address'] = "smtp.exmail.qq.com"
+        gitlab_rails['smtp_port'] = 465
+        gitlab_rails['smtp_user_name'] = "gitlab@cafebabe.fun"
+        gitlab_rails['smtp_password'] = "b8DYUktzWYaTyenh"
+        gitlab_rails['smtp_domain'] = "exmail.qq.com"
+        gitlab_rails['smtp_authentication'] = "login"
+        gitlab_rails['smtp_enable_starttls_auto'] = true
+        gitlab_rails['smtp_tls'] = true
+        gitlab_rails['smtp_pool'] = false
+        gitlab_rails['gitlab_email_from'] = 'gitlab@cafebabe.fun'
+        gitlab_rails['gitlab_email_display_name'] = 'GitLab'
+        gitlab_rails['omniauth_providers'] = [
+          {
+            "name" => "google_oauth2",
+            "app_id" => "554799054767-bp3irkdb7n7o97sv779sbiqe23r69tvm.apps.googleusercontent.com",
+            "app_secret" => "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",
+            "args" => { "access_type" => "offline", "approval_prompt" => "" }
+            }
+        ]
+        gitlab_kas['enable'] = true
+        gitlab_rails['registry_enabled'] = true
+        gitlab_rails['registry_api_url'] = "https://registry.gitlab.cafebabe.fun"
+        registry_external_url 'https://registry.gitlab.cafebabe.fun'
+        registry['registry_http_addr'] = ':5000'
+    ports:
+      - '8181:8181'
+      - '2222:22'
+      - "5005:5000"
+    volumes:
+      - ./conf:/etc/gitlab
+      - ~/.docker/volumes/gitlab/data:/var/opt/gitlab
+      - ~/.docker/volumes/gitlab/logs:/var/log/gitlab
